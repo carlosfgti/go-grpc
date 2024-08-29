@@ -15,7 +15,7 @@ import (
 
 const (
 	port     = ":50051"
-	mongoURI = "mongodb://localhost:27017"
+	mongoURI = "mongodb://admin:pass@localhost:27017"
 	dbName   = "golang-grpc"
 )
 
