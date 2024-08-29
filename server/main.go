@@ -3,10 +3,14 @@ package main
 import (
 	"context"
 	"log"
+	"net"
 	"time"
 
+	pb "github.com/carlosfgti/go-grpc/proto"
+	"github.com/carlosfgti/go-grpc/server/taskservice"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"google.golang.org/grpc"
 )
 
 const (
@@ -37,4 +41,27 @@ func main() {
 	}
 
 	log.Println("Connected to MongoDB")
+
+	// Create a new TaskService instance
+	taskCollection := client.Database(dbName).Collection("tasks")
+	taskService := taskservice.NewTaskService(taskCollection)
+
+	// Create a new gRPC server
+	s := grpc.NewServer()
+
+	// Register our service with the gRPC server
+	pb.RegisterTaskServiceServer(s, taskService)
+
+	// Start listening on the specified port
+	lis, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatalf("Failed to listen: %v", err)
+	}
+
+	log.Printf("Server listening on %s", port)
+
+	// Start serving
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve: %v", err)
+	}
 }
