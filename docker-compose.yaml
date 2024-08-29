@@ -1,0 +1,12 @@
+services:
+  mongodb:
+    image: mongo:4.4.4
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./.docker/dbdata:/data/db
+      - ./.docker/mongo:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+      - MONGO_INITDB_DATABASE=golang-grpc
